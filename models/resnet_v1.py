@@ -64,7 +64,7 @@ def resnet_layer(inputs,
     return x
 
 
-def resnet_v1(input_shape, depth, num_classes=10, attention_module=None):
+def resnet_v1(input_shape, depth, num_classes=7, attention_module=None):
     """ResNet Version 1 Model builder [a]
 
     Stacks of 2 x (3 x 3) Conv2D-BN-ReLU

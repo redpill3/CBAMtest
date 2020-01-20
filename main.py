@@ -57,7 +57,7 @@ y_train = keras.utils.to_categorical(y_train, num_classes)
 y_test = keras.utils.to_categorical(y_test, num_classes)
 
 depth = 20 # For ResNet, specify the depth (e.g. ResNet50: depth=50)
-model = resnet_v1.resnet_v1(input_shape=input_shape, depth=depth, attention_module=attention_module)
+model = resnet_v1.resnet_v1(input_shape=(448,448,3), depth=depth, attention_module=attention_module)
 # model = resnet_v2.resnet_v2(input_shape=input_shape, depth=depth, attention_module=attention_module)   
 # model = resnext.ResNext(input_shape=input_shape, classes=num_classes, attention_module=attention_module)
 # model = mobilenets.MobileNet(input_shape=input_shape, classes=num_classes, attention_module=attention_module)
@@ -92,15 +92,43 @@ lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
 
 callbacks = [checkpoint, lr_reducer, lr_scheduler]
 
+train_datagen = ImageDataGenerator(rescale=1./255, validation_split=0.2)
+
+batch_size = 8
+train_generator = train_datagen.flow_from_directory(
+        './train',
+        target_size=(448, 448),
+        batch_size=batch_size,
+        class_mode='categorical',
+        subset='training')
+
+
+
+val_generator = train_datagen.flow_from_directory(
+        './train',
+        target_size=(448, 448),
+        batch_size=batch_size,
+        class_mode='categorical',
+        subset='validation')
+
 # Run training, with or without data augmentation.
 if not data_augmentation:
     print('Not using data augmentation.')
+    '''
     model.fit(x_train, y_train,
               batch_size=batch_size,
               epochs=epochs,
               validation_data=(x_test, y_test),
               shuffle=True,
               callbacks=callbacks)
+    '''
+    history = model.fit_generator(train_generator,
+                                    steps_per_epoch=np.ceil(float(train_generator.samples) / float(batch_size)),
+                                    epochs=200,
+                                    validation_data=val_generator,
+                                    validation_steps=np.ceil(float(val_generator.samples) / float(batch_size)),
+                                    callbacks=callbacks)
+
 else:
     print('Using real-time data augmentation.')
     # This will do preprocessing and realtime data augmentation:
