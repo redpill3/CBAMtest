@@ -57,13 +57,13 @@ y_train = keras.utils.to_categorical(y_train, num_classes)
 y_test = keras.utils.to_categorical(y_test, num_classes)
 
 depth = 20 # For ResNet, specify the depth (e.g. ResNet50: depth=50)
-model = resnet_v1.resnet_v1(input_shape=(448,448,3), depth=depth, attention_module=attention_module)
+#model = resnet_v1.resnet_v1(input_shape=(448,448,3), depth=depth, attention_module=attention_module)
 # model = resnet_v2.resnet_v2(input_shape=input_shape, depth=depth, attention_module=attention_module)   
 # model = resnext.ResNext(input_shape=input_shape, classes=num_classes, attention_module=attention_module)
 # model = mobilenets.MobileNet(input_shape=input_shape, classes=num_classes, attention_module=attention_module)
 # model = inception_v3.InceptionV3(input_shape=input_shape, classes=num_classes, attention_module=attention_module)
 # model = inception_resnet_v2.InceptionResNetV2(input_shape=input_shape, classes=num_classes, attention_module=attention_module)
-# model = densenet.DenseNet(input_shape=input_shape, classes=num_classes, attention_module=attention_module)
+model = densenet.DenseNet(input_shape=(448,448,3), classes=7, attention_module=attention_module)
 
 '''
 model.compile(loss='categorical_crossentropy',
